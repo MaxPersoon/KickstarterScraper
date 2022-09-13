@@ -36,7 +36,7 @@ def wait(seconds):
         continue
 
 
-urls = ["https://www.kickstarter.com/projects/paperheartsbooks/paper-hearts-bookstore-book-truck"] * 100
+urls = ["https://www.kickstarter.com/projects/paperheartsbooks/paper-hearts-bookstore-book-truck"] * 5
 
 for url in urls:
     dataRetrieved = False
