@@ -1,9 +1,22 @@
+import csv
 import sys
 import time
 import requests
 import pyautogui
 from lxml import html
 from bs4 import BeautifulSoup
+
+
+def loadData(fileName):
+    file = open(fileName)
+    reader = csv.reader(file)
+    next(reader)
+
+    projects_ = []
+    for row in reader:
+        projects_.append([int(row[0]), row[21], int(row[22])])
+
+    return projects_
 
 
 def getContent(session_, url_, headers_):
@@ -52,7 +65,7 @@ def wait(waitTime):
         continue
 
 
-projects = [[2246288, "skullgarden/the-skullgarden-coloring-book", 1454111675]] * 100
+projects = loadData('input.csv')
 
 session = requests.session()
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0"}
@@ -88,7 +101,7 @@ for project in projects:
     graphData = [{
         "operationName": "Campaign",
         "variables": {
-            "slug": projects[0][1]
+            "slug": project[1]
         },
         "query": "query Campaign($slug: String!) {\n  project(slug: $slug) {\n    id\n    story\n}\n}\n"
     }]
