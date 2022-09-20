@@ -1,5 +1,5 @@
-import csv
 import sys
+import csv
 import time
 import requests
 import pyautogui
@@ -7,24 +7,48 @@ from lxml import html
 from bs4 import BeautifulSoup
 
 
-def loadData(fileName):
-    file = open(fileName)
-    reader = csv.reader(file)
-    next(reader)
+def loadData():
+    dataReader = csv.reader(open('Scraped Data\\data.csv', encoding='cp1252'))
+    skippedReader = open('Scraped Data\\skipped.txt', encoding='cp1252')
+    next(dataReader)
+
+    projectIDsToRemove = []
+    for row in dataReader:
+        projectIDsToRemove.append(int(row[0]))
+    for line in skippedReader:
+        projectIDsToRemove.append(int(line.strip()))
+
+    del dataReader
+    skippedReader.close()
+
+    inputReader = csv.reader(open('input.csv', encoding='cp1252'))
+    next(inputReader)
 
     projects_ = []
-    for row in reader:
-        projects_.append([int(row[0]), row[21], int(row[22])])
+    for row in inputReader:
+        projectID = int(row[0])
+        if projectID in projectIDsToRemove:
+            continue
+        projects_.append([projectID, int(row[1]), float(row[2]), float(row[3]), int(row[4]), float(row[5]), int(row[6]),
+                          int(row[7]), int(row[8]), int(row[9]), int(row[10]), int(row[11]), int(row[12]), int(row[13]),
+                          int(row[14]), int(row[15]), int(row[16]), int(row[17]), int(row[18]), int(row[19]), int(row[20]),
+                          int(row[21]), int(row[22]), row[23], int(row[24])])
+
+    del inputReader
 
     return projects_
 
 
-def getContent(session_, url_, headers_):
-    response_ = session_.get(url_, headers=headers_)
+def getOKResponse(url_, graphData_):
+    if graphData_ is None:
+        response_ = session.get(url_, headers=headers)
+    else:
+        response_ = session.post(url_, headers=headers, json=graphData_)
 
     while response_.status_code != 200:
+        print("Status code: " + str(response_.status_code))
         if response_.status_code == 403:
-            print("403 Forbidden\nRegaining access...")
+            print("Regaining access...")
 
             # Open 'Firefox' in incognito
             pyautogui.rightClick(275, 1060)
@@ -50,13 +74,19 @@ def getContent(session_, url_, headers_):
             # Close 'Firefox'
             pyautogui.click(1900, 10)
             wait(1)
+        elif response_.status_code == 429:
+            print("Waiting for 300 seconds...")
+            wait(300)
         else:
-            print("Unable to handle status code", response_.status_code)
+            print("Exiting...")
             sys.exit()
 
-        response_ = session_.get(url_, headers=headers_)
+        if graphData_ is None:
+            response_ = session.get(url_, headers=headers)
+        else:
+            response_ = session.post(url_, headers=headers, json=graphData_)
 
-    return html.fromstring(response_.content)
+    return response_
 
 
 def wait(waitTime):
@@ -65,64 +95,104 @@ def wait(waitTime):
         continue
 
 
-projects = loadData('input.csv')
+delay = 5
+projects = loadData()
+dataWriter = csv.writer(open('Scraped Data\\data.csv', 'a', newline='', encoding='cp1252'))
+skippedWriter = open('Scraped Data\\skipped.txt', 'a', encoding='cp1252')
 
 session = requests.session()
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0"}
-csrf = getContent(session, "https://www.kickstarter.com", headers).xpath('//meta[@name="csrf-token"]')[0].get('content')
+csrf = html.fromstring(getOKResponse("https://www.kickstarter.com/", None).content).xpath('//meta[@name="csrf-token"]')[0].get('content')
 headers["x-csrf-token"] = csrf
 
-for project in projects:
-    # Get creator's full name
-    url = "https://www.kickstarter.com/projects/" + project[1] + "/creator_bio"
-    fullName = getContent(session, url, headers).find_class("identity_name")[0].text.replace("\n", "")
-    output = "Name: " + fullName
+cntr = 0
+for project in projects[:10]:
+    cntr += 1
+    # wait(delay)
 
-    # Get creator's serial successful entrepreneurship status
-    url = "https://www.kickstarter.com/profile/" + project[1].split("/")[0] + "/created"
-    data = getContent(session, url, headers).find_class("project-card-list NS_user__projects_list list ratio-16-9")[0].getchildren()[0].attrib.get('data-projects')
+    # Get proper slug
+    url = "https://www.kickstarter.com/projects/" + project[23]
+    response = getOKResponse(url, None)
+    if "View copyright notification" in response.text:
+        print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (DMCA strike)")
+        skippedWriter.write(str(project[0]) + "\n")
+        continue
+    if "has been hidden for privacy" in response.text:
+        print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (hidden)")
+        skippedWriter.write(str(project[0]) + "\n")
+        continue
+    if response.url != url:
+        project[23] = '/'.join(response.url.split("/")[4:6])
+    videoPitch = len(html.fromstring(response.content).xpath("//*[@id='video_pitch']")) > 0
+
+    # Get variable 'creator_name'
+    url = "https://www.kickstarter.com/projects/" + project[23] + "/creator_bio"
+    fullName = html.fromstring(getOKResponse(url, None).content).find_class("identity_name")[0].text.replace("\n", "")
+    fullName = fullName.encode('cp1252', 'ignore').decode('cp1252')
+    if fullName == "(name not available)":
+        print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (hidden name)")
+        skippedWriter.write(str(project[0]) + "\n")
+        continue
+    project.append(fullName)
+
+    # Get variable 'serial_entrepreneur'
+    url = "https://www.kickstarter.com/profile/" + project[23].split("/")[0] + "/created"
+    data = html.fromstring(getOKResponse(url, None).content).find_class("project-card-list NS_user__projects_list list ratio-16-9")
+    if len(data) == 0:
+        print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (deleted profile)")
+        skippedWriter.write(str(project[0]) + "\n")
+        continue
+    data = data[0].getchildren()[0].attrib.get('data-projects')
+
     creatorProjects = data.split("},{")
     successfulProjectCounter = 0
     for creatorProject in creatorProjects:
         deadlineIndex = creatorProject.find("\"deadline\":")
         deadline = int(creatorProject[deadlineIndex + 11:deadlineIndex + 21])
-        if deadline < project[2]:
+        if deadline < project[24]:
             successfulIndex = creatorProject.find("\"state\":\"successful\"")
             if successfulIndex != -1:
                 successfulProjectCounter += 1
                 if successfulProjectCounter == 2:
-                    output += "; Serial: 1"
+                    project.append(1)
                     break
 
     if successfulProjectCounter < 2:
-        output += "; Serial: 0"
+        project.append(0)
 
-    # Get project's story
+    # Get variables 'media', 'sustainability' and 'story'
     graphData = [{
         "operationName": "Campaign",
         "variables": {
-            "slug": project[1]
+            "slug": project[23]
         },
         "query": "query Campaign($slug: String!) {\n  project(slug: $slug) {\n    id\n    story\n}\n}\n"
     }]
-    response = session.post("https://www.kickstarter.com/graph", json=graphData, headers=headers)
-
-    while response.status_code != 200:
-        if response.status_code == 429:
-            print("429 Too Many Requests\nWaiting for 300 seconds...")
-            wait(300)
-            response = session.post("https://www.kickstarter.com/graph", json=graphData, headers=headers)
-        else:
-            print("Unable to handle status code", response.status_code)
-            sys.exit()
+    response = getOKResponse("https://www.kickstarter.com/graph", graphData)
 
     data = response.json()
     story = data[0]['data']['project']['story']
+    if videoPitch:
+        project.append(1)
+    else:
+        if "<img" in story or "class=\"video-player\"" in story:
+            project.append(1)
+        else:
+            project.append(0)
     story = BeautifulSoup(story, 'lxml').text
     story = " ".join(story.split())
-    output += "; Story: " + story
+    story = story.encode('cp1252', 'ignore').decode('cp1252')
+    if len(story) == 0:
+        print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (empty story)")
+        skippedWriter.write(str(project[0]) + "\n")
+        continue
+    if "sustainability" in story:
+        project.append(1)
+    else:
+        project.append(0)
+    project.append(story)
 
-    print(output)
-    wait(5)
+    dataWriter.writerow(project)
+    print(str(cntr) + "/" + str(len(projects)) + ": " + str(project[25:30]))
 
 session.close()
