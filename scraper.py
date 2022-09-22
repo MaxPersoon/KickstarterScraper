@@ -1,8 +1,8 @@
+import vlc
 import sys
 import csv
 import time
 import requests
-import pyautogui
 from lxml import html
 from bs4 import BeautifulSoup
 
@@ -48,32 +48,10 @@ def getOKResponse(url_, graphData_):
     while response_.status_code != 200:
         print("Status code: " + str(response_.status_code))
         if response_.status_code == 403:
-            print("Regaining access...")
-
-            # Open 'Firefox' in incognito
-            pyautogui.rightClick(275, 1060)
-            wait(1)
-            pyautogui.leftClick(275, 940)
-            wait(1)
-
-            # Click on the address bar
-            pyautogui.click(350, 60)
-            wait(1)
-
-            # Navigate to url
-            pyautogui.write("https://www.kickstarter.com")
-            pyautogui.press('enter')
-            wait(3)
-
-            # Do human verification
-            pyautogui.mouseDown(250, 350)
-            wait(10)
-            pyautogui.mouseUp()
-            wait(5)
-
-            # Close 'Firefox'
-            pyautogui.click(1900, 10)
-            wait(1)
+            vlc.MediaPlayer('hangover-sound.mp3').play()
+            print("Waiting to continue...")
+            input()
+            print("Continuing...")
         elif response_.status_code == 429:
             print("Waiting for 300 seconds...")
             wait(300)
@@ -101,14 +79,14 @@ dataWriter = csv.writer(open('Scraped Data\\data.csv', 'a', newline='', encoding
 skippedWriter = open('Scraped Data\\skipped.txt', 'a', encoding='cp1252')
 
 session = requests.session()
-headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0"}
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0"}
 csrf = html.fromstring(getOKResponse("https://www.kickstarter.com/", None).content).xpath('//meta[@name="csrf-token"]')[0].get('content')
 headers["x-csrf-token"] = csrf
 
 cntr = 0
-for project in projects[:10]:
+for project in projects[:500]:
     cntr += 1
-    # wait(delay)
+    wait(delay)
 
     # Get proper slug
     url = "https://www.kickstarter.com/projects/" + project[23]
@@ -119,6 +97,10 @@ for project in projects[:10]:
         continue
     if "has been hidden for privacy" in response.text:
         print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (hidden)")
+        skippedWriter.write(str(project[0]) + "\n")
+        continue
+    if "intellectual property dispute" in response.text:
+        print(str(cntr) + "/" + str(len(projects)) + ": " + "skipped (IP dispute)")
         skippedWriter.write(str(project[0]) + "\n")
         continue
     if response.url != url:
