@@ -84,7 +84,7 @@ csrf = html.fromstring(getOKResponse("https://www.kickstarter.com/", None).conte
 headers["x-csrf-token"] = csrf
 
 cntr = 0
-for project in projects[:1000]:
+for project in projects:
     cntr += 1
     wait(delay)
 
