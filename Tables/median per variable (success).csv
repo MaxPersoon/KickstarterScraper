@@ -1,44 +1,44 @@
 Variable,Success (median),Failure (median),χ²-Value,p-Value
-norm_amount,3.7872833184782504,2.2329961103921536,1737.9980708014782,< 0.001
-female_creator,0.0,0.0,N/A,N/A
-norm_goal,3.4771212547196626,4.0,490.964594279522,< 0.001
-norm_words,2.537819095073274,2.291145341359497,373.02897889828915,< 0.001
-norm_backers_count,2.0170333392987803,0.6989700043360189,2105.9257313804424,< 0.001
-serial_entrepreneur,0.0,0.0,N/A,N/A
-norm_duration,5.477225575051661,5.571289867445548,343.5477415490342,< 0.001
-category_art,0.0,0.0,N/A,N/A
-category_comics,0.0,0.0,N/A,N/A
-category_crafts,0.0,0.0,N/A,N/A
-category_dance,0.0,0.0,N/A,N/A
-category_design,0.0,0.0,N/A,N/A
-category_fashion,0.0,0.0,N/A,N/A
-category_film&video,0.0,0.0,N/A,N/A
-category_food,0.0,0.0,N/A,N/A
-category_games,0.0,0.0,N/A,N/A
-category_journalism,0.0,0.0,N/A,N/A
-category_music,0.0,0.0,N/A,N/A
-category_photography,0.0,0.0,N/A,N/A
-category_publishing,0.0,0.0,N/A,N/A
-category_technology,0.0,0.0,N/A,N/A
-category_theater,0.0,0.0,N/A,N/A
-month_january,0.0,0.0,N/A,N/A
-month_february,0.0,0.0,N/A,N/A
-month_march,0.0,0.0,N/A,N/A
-month_april,0.0,0.0,N/A,N/A
-month_may,0.0,0.0,N/A,N/A
-month_june,0.0,0.0,N/A,N/A
-month_july,0.0,0.0,N/A,N/A
-month_august,0.0,0.0,N/A,N/A
-month_september,0.0,0.0,N/A,N/A
-month_october,0.0,0.0,N/A,N/A
-month_november,0.0,0.0,N/A,N/A
-month_december,0.0,0.0,N/A,N/A
-year_2019,0.0,0.0,N/A,N/A
-year_2020,0.0,0.0,N/A,N/A
-year_2021,0.0,0.0,N/A,N/A
-year_2022,0.0,0.0,N/A,N/A
-media,1.0,1.0,N/A,N/A
-sustainability,0.0,0.0,N/A,N/A
-norm_business,0.19409788557895208,0.300486787986029,49.926465125123414,< 0.001
-norm_empathic,0.29325201908118814,0.3001600464093023,0.30440599350211134,0.5811333523950499
-norm_social,1.0263493737055303,1.0916493744672018,108.98949741016011,< 0.001
+norm_amount,3.787,2.233,1737.998,< 0.001
+female_creator,0.000,0.000,N/A,N/A
+norm_goal,3.477,4.000,490.965,< 0.001
+norm_words,2.538,2.291,373.029,< 0.001
+norm_backers_count,2.017,0.699,2105.926,< 0.001
+serial_entrepreneur,0.000,0.000,N/A,N/A
+norm_duration,5.477,5.571,343.548,< 0.001
+category_art,0.000,0.000,N/A,N/A
+category_comics,0.000,0.000,N/A,N/A
+category_crafts,0.000,0.000,N/A,N/A
+category_dance,0.000,0.000,N/A,N/A
+category_design,0.000,0.000,N/A,N/A
+category_fashion,0.000,0.000,N/A,N/A
+category_film&video,0.000,0.000,N/A,N/A
+category_food,0.000,0.000,N/A,N/A
+category_games,0.000,0.000,N/A,N/A
+category_journalism,0.000,0.000,N/A,N/A
+category_music,0.000,0.000,N/A,N/A
+category_photography,0.000,0.000,N/A,N/A
+category_publishing,0.000,0.000,N/A,N/A
+category_technology,0.000,0.000,N/A,N/A
+category_theater,0.000,0.000,N/A,N/A
+month_january,0.000,0.000,N/A,N/A
+month_february,0.000,0.000,N/A,N/A
+month_march,0.000,0.000,N/A,N/A
+month_april,0.000,0.000,N/A,N/A
+month_may,0.000,0.000,N/A,N/A
+month_june,0.000,0.000,N/A,N/A
+month_july,0.000,0.000,N/A,N/A
+month_august,0.000,0.000,N/A,N/A
+month_september,0.000,0.000,N/A,N/A
+month_october,0.000,0.000,N/A,N/A
+month_november,0.000,0.000,N/A,N/A
+month_december,0.000,0.000,N/A,N/A
+year_2019,0.000,0.000,N/A,N/A
+year_2020,0.000,0.000,N/A,N/A
+year_2021,0.000,0.000,N/A,N/A
+year_2022,0.000,0.000,N/A,N/A
+media,1.000,1.000,N/A,N/A
+sustainability,0.000,0.000,N/A,N/A
+norm_business,0.194,0.300,49.926,< 0.001
+norm_empathic,0.293,0.300,0.304,0.581
+norm_social,1.026,1.092,108.989,< 0.001
