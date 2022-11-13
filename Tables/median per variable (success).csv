@@ -1,7 +1,7 @@
 Variable,Success (median),Failure (median),χ²-Value,p-Value
-norm_amount,3.787,2.233,1737.998,< 0.001
+norm_amount,3.787,2.233,1736.985,< 0.001
 female_creator,0.000,0.000,N/A,N/A
-norm_goal,3.477,4.000,490.965,< 0.001
+norm_goal,3.477,4.000,492.586,< 0.001
 norm_words,2.538,2.291,373.029,< 0.001
 norm_backers_count,2.017,0.699,2105.926,< 0.001
 serial_entrepreneur,0.000,0.000,N/A,N/A
@@ -39,6 +39,6 @@ year_2021,0.000,0.000,N/A,N/A
 year_2022,0.000,0.000,N/A,N/A
 media,1.000,1.000,N/A,N/A
 sustainability,0.000,0.000,N/A,N/A
-norm_business,0.194,0.300,49.926,< 0.001
-norm_empathic,0.293,0.300,0.304,0.581
-norm_social,1.026,1.092,108.989,< 0.001
+norm_business,1.228,1.394,49.926,< 0.001
+norm_empathic,1.379,1.391,0.304,0.581
+norm_social,3.224,3.482,108.989,< 0.001
